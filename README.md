@@ -25,4 +25,4 @@ Tools & Technologies
 How to Run
 1. Clone this repository:
    ```bash
-   git clone https://github.com/<your-username>/<repo-name>.git
+   git clone https://github.com/maziyaneliswanhlanhla/csc-411_project.git
