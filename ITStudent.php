@@ -66,42 +66,63 @@ class ITStudent {
     
     // Convert to XML
     public function toXML() {
-        $xml = new SimpleXMLElement('<student></student>');
-        $xml->addChild('name', htmlspecialchars($this->studentName));
-        $xml->addChild('studentID', $this->studentID);
-        $xml->addChild('programme', htmlspecialchars($this->programme));
-        
-        $coursesNode = $xml->addChild('courses');
-        foreach ($this->courses as $courseName => $mark) {
-            $courseNode = $coursesNode->addChild('course');
-            $courseNode->addChild('name', htmlspecialchars($courseName));
-            $courseNode->addChild('mark', $mark);
-        }
-        
-        return $xml->asXML();
+    $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    $xml .= "<student>";
+    $xml .= "<name>{$this->studentName}</name>";
+    $xml .= "<studentID>{$this->studentID}</studentID>";
+    $xml .= "<programme>{$this->programme}</programme>";
+    $xml .= "<courses>";
+
+    foreach ($this->courses as $course => $mark) {
+        $xml .= "<course>";
+        $xml .= "<courseName>$course</courseName>";
+        $xml .= "<mark>$mark</mark>";
+        $xml .= "</course>";
     }
+
+    $xml .= "</courses>";
+    $xml .= "</student>";
+
+    // REMOVE ANY BOM or whitespace before XML
+    $xml = preg_replace('/^\xEF\xBB\xBF/', '', $xml);
+    $xml = ltrim($xml);
+
+    return $xml;
+}
+
     
     // Create from XML
     public static function fromXML($xmlString) {
-        $xml = simplexml_load_string($xmlString);
-        
-        $student = new ITStudent();
-        $student->setStudentName((string)$xml->name);
-        $student->setStudentID((string)$xml->studentID);
-        $student->setProgramme((string)$xml->programme);
-        
-        $courses = [];
-        if (isset($xml->courses->course)) {
-            foreach ($xml->courses->course as $course) {
-                $courseName = (string)$course->name;
-                $mark = (int)$course->mark;
-                $courses[$courseName] = $mark;
-            }
-        }
-        $student->setCourses($courses);
-        
-        return $student;
+
+    // Clean BOM + whitespace before XML
+    $xmlString = preg_replace('/^\xEF\xBB\xBF/', '', $xmlString);
+    $xmlString = ltrim($xmlString);
+
+    // Load XML safely
+    $xml = simplexml_load_string($xmlString);
+    if ($xml === false) {
+        return new ITStudent(); // avoid fatal error
     }
+
+    $student = new ITStudent();
+    $student->setStudentName((string)$xml->name);
+    $student->setStudentID((string)$xml->studentID);
+    $student->setProgramme((string)$xml->programme);
+
+    $courses = [];
+    if (isset($xml->courses->course)) {
+        foreach ($xml->courses->course as $course) {
+            $courseName = (string)$course->courseName; // FIXED
+            $mark = (int)$course->mark;
+            $courses[$courseName] = $mark;
+        }
+    }
+
+    $student->setCourses($courses);
+
+    return $student;
+}
+
     
     // Display student information
     public function display() {
