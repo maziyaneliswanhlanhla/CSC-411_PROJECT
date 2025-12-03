@@ -37,12 +37,9 @@ This project implements the classic **Producer-Consumer Problem** using PHP, dem
  TCP socket communication
  Client-server architecture
 
-### Video Presentation 
- 📹 Demonstration video 
 
-
-
-
+## Video Demonstration
+ [Watch the Video on Google Drive](https://drive.google.com/file/d/10xKbZCsj9XExe4oe6crgjvZZbGHBZYCJ/view?usp=drive_link)
 
 ### Core Classes
 
